@@ -21,7 +21,7 @@ def get_img_description(filepath):
             messages = [
                 {
                     'role': 'user',
-                    'content': 'Describe the image to a child',
+                    'content': 'Tell me a short (3 sentence) science fiction story inspired by this image',
                     'images': [file.read()],
                 }
                 
@@ -46,7 +46,7 @@ def upload_file():
         return render_template('image_render.html', img=filename, description=description)
     return render_template('image_render.html')
 
-
+# Lets go --------------------------------------------------------------------
 if __name__ == "__main__":
     app.run(debug=True, port=9000)
 
