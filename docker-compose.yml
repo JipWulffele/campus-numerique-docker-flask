@@ -1,17 +1,35 @@
   
 services:
     
+   # Postgres -----------------------------------------------------
+  db:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: flaskuser
+      POSTGRES_PASSWORD: flaskpass
+      POSTGRES_DB: flaskdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -t 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+
+  # Ollama --------------------------------------------------------- 
   ollama:
-    image: alpine/ollama # Has shell !
+    image: ollama/ollama # Has shell !
     container_name: ollama
     volumes:
       - ollama_data:/root/.ollama
-      - ./ollama-entrypoint.sh:/usr/local/bin/ollama-entrypoint.sh
     ports:
       - "11435:11434"  # Host port mapping
-    entrypoint: ["/bin/sh", "/usr/local/bin/ollama-entrypoint.sh"]
 
-
+  # Flask ---------------------------------------------------------
   flask_app:
     build:
       context: .
@@ -20,9 +38,15 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - OLLAMA_HOST=http://ollama:11434   # Use container port
+      OLLAMA_HOST: http://ollama:11434   # Use container port
+      DATABASE_URL: postgresql://flaskuser:flaskpass@db:5432/flaskdb
     depends_on:
       - ollama
+      - db
+    volumes:
+      - ./static/uploads:/app/static/uploads
 
+# Volumes --------------------------------------------------------
 volumes:
   ollama_data:
+  postgres_data:
