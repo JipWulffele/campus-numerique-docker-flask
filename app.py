@@ -13,10 +13,13 @@ app.config['UPLOAD'] = upload_folder
 
 
 # Ollama description ---------------------------------------------------------
+ollama_host = os.getenv("OLLAMA_HOST", "http://ollama:11434")
+client = ollama.Client(host=ollama_host)
+
 def get_img_description(filepath):
     print(filepath)
     with open(filepath, 'rb')as file:
-        response = ollama.chat(
+        response = client.chat(
             model='LLaVA-LLaMA3:8b',
             messages = [
                 {

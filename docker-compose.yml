@@ -1,0 +1,28 @@
+  
+services:
+    
+  ollama:
+    image: alpine/ollama # Has shell !
+    container_name: ollama
+    volumes:
+      - ollama_data:/root/.ollama
+      - ./ollama-entrypoint.sh:/usr/local/bin/ollama-entrypoint.sh
+    ports:
+      - "11435:11434"  # Host port mapping
+    entrypoint: ["/bin/sh", "/usr/local/bin/ollama-entrypoint.sh"]
+
+
+  flask_app:
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    container_name: flask_app
+    ports:
+      - "5000:5000"
+    environment:
+      - OLLAMA_HOST=http://ollama:11434   # Use container port
+    depends_on:
+      - ollama
+
+volumes:
+  ollama_data:
