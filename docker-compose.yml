@@ -58,3 +58,6 @@ volumes:
 # docker ps -aq | xargs docker stop
 # docker ps -aq | xargs docker rm
 # docker compose down -v
+
+# Build and run containers:
+# docker compose up --build
