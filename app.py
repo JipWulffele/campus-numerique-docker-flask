@@ -1,79 +1,31 @@
+# Flask imports
 from flask import Flask, render_template, request
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 
-import ollama
+# Agents
+from src.agents.database import Database, Upload
+from src.agents.ollama_client import OllamaClient
 
+# Pydantic models
+from src.models.image_description import ImageStroyTelling
+
+# Other
+import ollama
 import os
 
+# Initalize app -------------------------------------------------------------
 app = Flask(__name__)
 
 upload_folder = os.path.join('static', 'uploads')
-
 app.config['UPLOAD'] = upload_folder
 
-
-# Ollama description ---------------------------------------------------------
-ollama_host = os.getenv("OLLAMA_HOST", "http://ollama:11434")
-client = ollama.Client(host=ollama_host)
-MODEL = "llava-llama3:latest"
-client.pull(MODEL) # pull model, does ont persist between restarts !
-
-def get_img_description(filepath):
-    with open(filepath, 'rb') as file:
-        image_bytes = file.read()
-        response = client.chat(
-            model=MODEL,
-            messages = [
-                {
-                    'role': 'user',
-                    'content': 'Tell me a short science fiction story inspired by this image. 50 words maximum.',
-                    'images': [image_bytes],
-                }
-                
-            ]
-        )
-    return response['message']['content']
-
-# Upload to database ---------------------------------------------------------
-
-db = SQLAlchemy() # Create the SQLAlchemy instance
-
 # Initialize database
-def init_db(app):
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-        "DATABASE_URL", "postgresql://flaskuser:flaskpass@localhost:5432/flaskdb"
-    )
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    db.init_app(app)
+database = Database(app)
+database.create_tables()
 
-init_db(app)
-
-# db structure
-class Upload(db.Model):
-    __tablename__ = 'upload'
-
-    filename = db.Column(db.String(50), primary_key=True)
-    description = db.Column(db.Text, nullable=False)
-
-# Create tables on app startup
-with app.app_context():
-    try:
-        db.create_all()
-        print("Database tables created successfully")
-    except Exception as e:
-        print(f"Error creating tables: {e}")
-
-# Function to upload to db
-def upload_to_database(filename, text):
-    
-    upload = Upload(
-        filename=filename,
-        description=text,
-    )
-    db.session.add(upload)
-    db.session.commit()
-
+# Initialize Ollama client
+ollama_client = OllamaClient()
 
 # App ------------------------------------------------------------------------
 @app.route('/', methods=['GET', 'POST'])
@@ -93,12 +45,12 @@ def main():
             return render_template('image_render.html', img=filename, description=existing_file.description)
 
         # Ask ollama description
-        description = get_img_description(filepath)
+        story_model = ollama_client.get_img_story(filepath)
         
-        # Upload image and description to database
-        upload_to_database(filename, description)
+        # Upload to database
+        database.upload_to_database(filename, story_model)
 
-        return render_template('image_render.html', img=filename, description=description)
+        return render_template('image_render.html', img=filename, description=story_model)
     return render_template('image_render.html')
 
 # Lets go --------------------------------------------------------------------
