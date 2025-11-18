@@ -16,18 +16,19 @@ app.config['UPLOAD'] = upload_folder
 # Ollama description ---------------------------------------------------------
 ollama_host = os.getenv("OLLAMA_HOST", "http://ollama:11434")
 client = ollama.Client(host=ollama_host)
-
-client.pull("LLaVA-LLaMA3:8b")
+MODEL = "moondream:v2"
+client.pull(MODEL) # pull model
 
 def get_img_description(filepath):
     with open(filepath, 'rb') as file:
+        image_bytes = file.read()
         response = client.chat(
-            model='LLaVA-LLaMA3:8b',
+            model=MODEL,
             messages = [
                 {
                     'role': 'user',
                     'content': 'Tell me a short science fiction story inspired by this image. 50 words maximum.',
-                    'images': [file.read()],
+                    'images': [image_bytes],
                 }
                 
             ]
@@ -52,10 +53,9 @@ init_db(app)
 class Upload(db.Model):
     __tablename__ = 'upload'
 
-    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(50), primary_key=True)
     img = db.Column(db.Text, nullable=False)
     description = db.Column(db.Text, nullable=False)
-    filename = db.Column(db.String(50), nullable=False)
     mimetype = db.Column(db.Text, nullable=False)
 
 # Create tables on app startup
@@ -71,9 +71,9 @@ def upload_to_database(file, filename, text):
     mimetype = file.mimetype
 
     upload = Upload(
+        filename=filename,
         img=file.read(),
         description=text,
-        filename=filename,
         mimetype=mimetype
     )
 
@@ -83,17 +83,23 @@ def upload_to_database(file, filename, text):
 
 # App ------------------------------------------------------------------------
 @app.route('/', methods=['GET', 'POST'])
-def upload_file():
+def main():
     if request.method == 'POST':
-
+        print("Received POST request")
         # Upload and save image
         file = request.files['img']
         filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD'], filename))
+        os.makedirs(app.config['UPLOAD'], exist_ok=True)
         filepath = os.path.join(app.config['UPLOAD'], filename)
+        file.save(filepath)
+        
+        # Check if file already exists in database
+        existing_file = Upload.query.filter_by(filename=filename).first()
+        if existing_file:
+            return render_template('image_render.html', img=filename, description=existing_file.description)
 
         # Ask ollama description
-        description = get_img_description(filepath )
+        description = get_img_description(filepath)
         
         # Upload image and description to database
         upload_to_database(file, filename, description)

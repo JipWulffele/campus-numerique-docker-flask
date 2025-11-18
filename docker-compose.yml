@@ -22,7 +22,7 @@ services:
 
   # Ollama --------------------------------------------------------- 
   ollama:
-    image: ollama/ollama # Has shell !
+    image: ollama/ollama 
     container_name: ollama
     volumes:
       - ollama_data:/root/.ollama
