@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql
+      - postgres_data:/var/lib/postgresql # Persist data, avoid data loss on container restart
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB} -t 1"]
       interval: 10s
@@ -22,10 +22,10 @@ services:
 
   # Ollama --------------------------------------------------------- 
   ollama:
-    image: ollama/ollama 
+    image: ollama/ollama # Use the official Ollama image
     container_name: ollama
     volumes:
-      - ollama_data:/root/.ollama
+      - ollama_data:/root/.ollama 
     ports:
       - "11435:11434"  # Host port mapping
 
@@ -50,3 +50,11 @@ services:
 volumes:
   ollama_data:
   postgres_data:
+
+
+# Useful commands ------------------------------------------------
+
+# Clear postgres table:
+# docker ps -aq | xargs docker stop
+# docker ps -aq | xargs docker rm
+# docker compose down -v

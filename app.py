@@ -17,7 +17,7 @@ app.config['UPLOAD'] = upload_folder
 ollama_host = os.getenv("OLLAMA_HOST", "http://ollama:11434")
 client = ollama.Client(host=ollama_host)
 MODEL = "moondream:v2"
-client.pull(MODEL) # pull model
+client.pull(MODEL) # pull model, does ont persist between restarts !
 
 def get_img_description(filepath):
     with open(filepath, 'rb') as file:
@@ -54,7 +54,7 @@ class Upload(db.Model):
     __tablename__ = 'upload'
 
     filename = db.Column(db.String(50), primary_key=True)
-    img = db.Column(db.Text, nullable=False)
+    img = db.Column(db.LargeBinary, nullable=False)
     description = db.Column(db.Text, nullable=False)
     mimetype = db.Column(db.Text, nullable=False)
 
@@ -67,16 +67,16 @@ with app.app_context():
         print(f"Error creating tables: {e}")
 
 # Function to upload to db
-def upload_to_database(file, filename, text):
-    mimetype = file.mimetype
-
+def upload_to_database(filepath, filename, text, mimetype):
+    with open(filepath, "rb") as f:
+        img_bytes = f.read()
+    
     upload = Upload(
         filename=filename,
-        img=file.read(),
+        img=img_bytes,
         description=text,
         mimetype=mimetype
     )
-
     db.session.add(upload)
     db.session.commit()
 
@@ -85,10 +85,11 @@ def upload_to_database(file, filename, text):
 @app.route('/', methods=['GET', 'POST'])
 def main():
     if request.method == 'POST':
-        print("Received POST request")
+
         # Upload and save image
         file = request.files['img']
         filename = secure_filename(file.filename)
+        mimetype = file.mimetype
         os.makedirs(app.config['UPLOAD'], exist_ok=True)
         filepath = os.path.join(app.config['UPLOAD'], filename)
         file.save(filepath)
@@ -96,13 +97,13 @@ def main():
         # Check if file already exists in database
         existing_file = Upload.query.filter_by(filename=filename).first()
         if existing_file:
-            return render_template('image_render.html', img=filename, description=existing_file.description)
+            return render_template('image_render.html', img=existing_file.img, description=existing_file.description)
 
         # Ask ollama description
         description = get_img_description(filepath)
         
         # Upload image and description to database
-        upload_to_database(file, filename, description)
+        upload_to_database(filepath, filename, description, mimetype)
 
         return render_template('image_render.html', img=filename, description=description)
     return render_template('image_render.html')
