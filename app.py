@@ -18,7 +18,7 @@ import ollama
 import os
 
 # Set testing flag ----------------------------------------------------------
-TEST = False  # Set to False to use the actual Ollama client
+TEST = True  # Set to False to use the actual Ollama client
 
 # Initalize app -------------------------------------------------------------
 app = Flask(__name__)
@@ -49,12 +49,12 @@ def main():
         existing_file = Upload.query.filter_by(filename=filename).first()
         if existing_file:
             title, story, color = get_info_from_database(existing_file)
-            return render_template('image_render.html', img=filename, title=title, description=story, color=color)
+            return render_template('index.html', img=filename, title=title, description=story, color=color)
 
         # Ask ollama description
         if TEST: # for testing purposes
             response_raw = """{"background_color": "light blue",
-                            "genre": "Fantasy",
+                            "genre": "Horror",
                             "animal": "dragon",
                             "num_animals": 1,
                             "story": "In a mystical land, a lone dragon soars through the light blue skies, its scales shimmering in the sunlight as it embarks on an epic quest to find a hidden treasure."}"""
@@ -66,10 +66,10 @@ def main():
         database.upload_to_database(filename, response_raw, parsed)
 
         # Render template
-        title, story,  bg_color= get_info_from_parsed(parsed)
-        return render_template('image_render.html', img=filename, title=title, description=story, bg_color=bg_color)
+        title, story,  bg_color = get_info_from_parsed(parsed)
+        return render_template('index.html', img=filename, title=title, description=story, bg_color=bg_color)
 
-    return render_template('image_render.html')
+    return render_template('index.html')
 
 # Lets go --------------------------------------------------------------------
 if __name__ == "__main__":
