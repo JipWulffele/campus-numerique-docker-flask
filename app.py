@@ -16,7 +16,7 @@ app.config['UPLOAD'] = upload_folder
 # Ollama description ---------------------------------------------------------
 ollama_host = os.getenv("OLLAMA_HOST", "http://ollama:11434")
 client = ollama.Client(host=ollama_host)
-MODEL = "moondream:v2"
+MODEL = "llava-llama3:latest"
 client.pull(MODEL) # pull model, does ont persist between restarts !
 
 def get_img_description(filepath):
