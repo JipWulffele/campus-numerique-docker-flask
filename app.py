@@ -66,8 +66,8 @@ def main():
         database.upload_to_database(filename, response_raw, parsed)
 
         # Render template
-        title, story, color = get_info_from_parsed(parsed)
-        return render_template('image_render.html', img=filename, title=title, description=story, color=color)
+        title, story,  bg_color= get_info_from_parsed(parsed)
+        return render_template('image_render.html', img=filename, title=title, description=story, bg_color=bg_color)
 
     return render_template('image_render.html')
 

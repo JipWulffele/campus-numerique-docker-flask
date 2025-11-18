@@ -32,7 +32,7 @@
     }
 
     .upload-label {
-      background: #4a6cff;
+      background: #888888;
       color: white;
       padding: 12px 24px;
       border-radius: 8px;
@@ -42,7 +42,7 @@
     }
 
     .upload-label:hover {
-      background: #3e5ae6;
+      background: #888888;
     }
 
     .submit-btn {
@@ -109,7 +109,7 @@
     {% endif %}
 
     {% if description %}
-      <div class="story" style="--bg: {{ bg | default('#f7e7a9') }}">
+      <div class="story" style="--bg: {{ bg_color | default('#f7e7a9') }}">
         {{ description }}
       </div>
     {% endif %}
