@@ -26,6 +26,7 @@ services:
     container_name: ollama
     volumes:
       - ollama_data:/root/.ollama 
+      - /usr/share/ollama/.ollama/models/:/root/.ollama/models # Map local models directory
     ports:
       - "11435:11434"  # Host port mapping
 
@@ -58,6 +59,9 @@ volumes:
 # docker ps -aq | xargs docker stop
 # docker ps -aq | xargs docker rm
 # docker compose down -v
+
+# If cache problems:
+# docker builder prune --force
 
 # Build and run containers:
 # docker compose up --build

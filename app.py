@@ -18,7 +18,7 @@ import ollama
 import os
 
 # Set testing flag ----------------------------------------------------------
-TEST = True  # Set to False to use the actual Ollama client
+TEST = False  # Set to False to use the actual Ollama client
 
 # Initalize app -------------------------------------------------------------
 app = Flask(__name__)

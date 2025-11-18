@@ -9,7 +9,7 @@ class OllamaClient:
     def __init__(self):
         ollama_host = os.getenv("OLLAMA_HOST", "http://ollama:11434")
         self.client = ollama.Client(host=ollama_host)
-        self.model = "llava-llama3:latest"
+        self.model = "LLaVA-LLaMA3"
         self.client.pull(self.model)  # pull model, does not persist between restarts!
 
     def get_img_story(self, filepath):
