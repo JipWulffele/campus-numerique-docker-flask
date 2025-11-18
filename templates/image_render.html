@@ -1,21 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Rendering Dynamic Images Using Flask</title>
+  <meta charset="UTF-8">
+  <title>Bedtime stories</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f4f4f8;
+      padding: 40px 12px;
+    }
+
+    .card {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 24px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+    }
+
+    /* Nicely styled upload button */
+    .upload-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-label {
+      background: #4a6cff;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .upload-label:hover {
+      background: #3e5ae6;
+    }
+
+    .submit-btn {
+      background: #222;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: block;
+      margin: 0 auto 30px auto;
+    }
+
+    .submit-btn:hover {
+      background: #444;
+    }
+
+    img.upload {
+      max-width: 100%;
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto 20px auto;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .story {
+      background: var(--bg, #f0f0f0);
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 1.1rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+  </style>
 </head>
+
 <body>
-<form action="{{ url_for('main') }}" enctype="multipart/form-data" method="POST">
-    <input name="img" type="file"/>
-    <input type="submit"/>
-</form>
- 
-{% if img %}
-<h1>Rendered Image</h1>
-<img src="{{ url_for('static', filename='uploads/' ~ img) }}" width="300">
-<p>{{description}}</p>
-{% else %}
-<h1>Image will be render here...</h1>
-{% endif %}
+
+  <form action="{{ url_for('main') }}" enctype="multipart/form-data" method="POST" class="card">
+
+    <div class="upload-wrapper">
+      <label for="img" class="upload-label">Choose Image</label>
+      <input id="img" name="img" type="file" accept="image/*" />
+    </div>
+
+    <button class="submit-btn" type="submit">Upload</button>
+
+    {% if img %}
+      <img class="upload" src="{{ url_for('static', filename='uploads/' ~ img) }}" alt="uploaded image" />
+    {% endif %}
+
+    {% if title %}
+      <div class="title">{{ title }}</div>
+    {% endif %}
+
+    {% if description %}
+      <div class="story" style="--bg: {{ bg | default('#f7e7a9') }}">
+        {{ description }}
+      </div>
+    {% endif %}
+  </form>
+
 </body>
 </html>
