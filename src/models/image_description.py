@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Literal
 
 class ImageStroyTelling(BaseModel):
     background_color: str = Field(description="Background color of the image")
