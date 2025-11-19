@@ -2,14 +2,14 @@ from src.models.image_description import ImageStroyTelling
 from pydantic import ValidationError
 
 GENRE_BG = {
-    "Fantasy": "#f6e8ff",
-    "Sci-fi": "#e8f4ff",
-    "Horror": "#4a1f1f",
-    "Mystery": "#f5f2e9",
-    "Adventure": "#fff4e6",
-    "Fairy-tale": "#fff0f6",
-    "Childeren's story": "#fffbda",
-    "Post-apocalyptic": "#efe9e0",
+    "Fantasy": "#f7ecff",         # pale lavender
+    "Sci-fi": "#e9f7ff",          # very light cyan-blue
+    "Horror": "#ffebeb",          # soft, pale red 
+    "Mystery": "#f7f5ee",         # light warm beige
+    "Adventure": "#fff7e8",       # light golden sand
+    "Fairy-tale": "#fff2fa",      # pale pink-mauve
+    "Children's story": "#fffce5",# warm cream yellow
+    "Post-apocalyptic": "#f4eee6" # very light dusty tan
 }
 
 

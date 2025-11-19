@@ -5,10 +5,25 @@
   <title>Upload Image</title>
 
   <style>
+
     body {
       font-family: system-ui, sans-serif;
       background: #f4f4f8;
       padding: 40px 12px;
+    }
+
+    .page-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #555;
+      margin-bottom: 30px;
     }
 
     .card {
@@ -74,6 +89,9 @@
 </head>
 
 <body>
+
+  <h1 class="page-title">Image StoryTeller</h1>
+  <p class="page-subtitle">Upload an image and we will create a story based on what's inside it!</p>
 
   <form action="{{ url_for('main') }}" method="POST" enctype="multipart/form-data" class="card" id="uploadForm">
 
