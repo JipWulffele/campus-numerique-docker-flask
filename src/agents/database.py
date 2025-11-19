@@ -52,7 +52,7 @@ class Upload(db.Model):
     genre = db.Column(db.String(30))
     genre_reasoning = db.Column(db.Text)
     title = db.Column(db.String(100))
-    animal = db.Column(db.String(30))
+    animal = db.Column(db.Text)
     num_animals = db.Column(db.Integer)
     story = db.Column(db.Text)
         

@@ -11,7 +11,7 @@ Follow these steps in order, showing your reasoning at each step:
   - animal: Identify the type(s) of animal(s) present. Consider any details about them.
   - num_animals: Count the total number of animals.
   - genre_reasoning: Based on the background color, animal type, and mood of the scene, reason which genre best fits the image. Explain your reasoning.
-  - genre: Choose the most appropriate genre from this list: Fantasy, Sci-fi, Horror, Mystery, Adventure, Fairy-tale, Children's story, Post-apocalyptic. Make sure your choice matches your previous explanation.
+  - genre: Based on your reasoning, choose the appropriate genre from this list: Fantasy, Sci-fi, Horror, Mystery, Adventure, Fairy-tale, Children's story, Post-apocalyptic. Make sure your choice matches your previous explanation.
 2. Using all extracted attributes, brainstorm a short story (max 100 words) that fits the genre and involves the animal. Think through the plot, main action, and ending briefly before writing it.
 3. Determine a title for the story that captures its essence.
 
