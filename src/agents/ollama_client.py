@@ -9,10 +9,7 @@ class OllamaClient:
     """Ollama client for image description generation."""
 
     def __init__(self):
-        #ollama_host = os.getenv("OLLAMA_HOST", "http://ollama:11434")
-        #self.client = ollama.Client(host=ollama_host)
-        self.model = "LLaVA-LLaMA3"
-        #self.client.pull(self.model)  # pull model, does not persist between restarts!
+        self.model = "llava-llama3:latest"
 
     def get_img_story(self, filepath):
         with open("src/prompts/story_telling.txt", "r") as f:
@@ -22,7 +19,7 @@ class OllamaClient:
         
         image_b64 = base64.b64encode(image_bytes).decode('utf-8')
         response = requests.post(
-            "http://ollama:11434/api/generate", # Inside docker network use "ollama:11434", from host use "localhost:11435"
+            "http://ollama:11434/api/chat", # Inside docker network use "ollama:11434", from host use "localhost:11435"
             json={
                 "model": self.model,
                 "messages": [
@@ -40,8 +37,7 @@ class OllamaClient:
 
         if response.status_code != 200:
             raise Exception(f"Request failed with status code {response.status_code}: {response.text}")
-        # Attempt to decode JSON
         try:
-            return response.json()['response']
+            return response.json()['message']['content']
         except ValueError as e:
             raise Exception(f"Failed to decode JSON: {e} - Response: {response}")

@@ -27,7 +27,7 @@ def parse_response(response_raw, model):
         parsed = model.parse_raw(response_raw)
         return parsed
     except ValidationError as e:
-        print(f"Error parsing response: {e}")
+        raise Exception(f"Error parsing response: {e}, response_raw: {response_raw}")
         return None
 
 def get_info_from_parsed(parsed):

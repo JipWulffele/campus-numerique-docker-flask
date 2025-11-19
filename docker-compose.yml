@@ -26,8 +26,7 @@ services:
     container_name: ollama
     restart: unless-stopped
     volumes:
-      #- ollama_data:/root/.ollama 
-      - /usr/share/ollama/.ollama/models:/root/.ollama/models # Map local models directory
+      - /home/jip.wulffele@Digital-Grenoble.local/.ollama/models:/root/.ollama/models # Map local models directory
     ports:
       - "11435:11434"  # Host port mapping
 
@@ -40,7 +39,6 @@ services:
     ports:
       - "5000:5000"
     environment:
-      #OLLAMA_HOST: http://ollama:11434   # Use container port
       DATABASE_URL: postgresql://flaskuser:flaskpass@db:5432/flaskdb
     depends_on:
       - ollama
@@ -63,6 +61,7 @@ volumes:
 
 # If cache problems:
 # docker builder prune --force
+# docker system prune
 
 # Build and run containers:
 # docker compose up --build
