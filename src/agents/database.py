@@ -28,8 +28,10 @@ class Database:
         upload = Upload(
             filename=filename,
             raw_description=raw_description,
-            background_color=(parsed.background_color if parsed else None),
+            llm_color=(parsed.background_color if parsed else None),
             genre=(parsed.genre if parsed else None),
+            genre_reasoning=(parsed.genre_reasoning if parsed else None),
+            title=(parsed.title if parsed else None),
             animal=(parsed.animal if parsed else None),
             num_animals=(parsed.num_animals if parsed else None),
             story=(parsed.story if parsed else None)
@@ -46,8 +48,10 @@ class Upload(db.Model):
     raw_description = db.Column(db.Text, nullable=False)
 
     # Parsed fields
-    background_color = db.Column(db.String(30))
+    llm_color = db.Column(db.String(30))
     genre = db.Column(db.String(30))
+    genre_reasoning = db.Column(db.Text)
+    title = db.Column(db.String(100))
     animal = db.Column(db.String(30))
     num_animals = db.Column(db.Integer)
     story = db.Column(db.Text)

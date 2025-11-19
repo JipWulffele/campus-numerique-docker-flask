@@ -48,7 +48,6 @@ services:
 
 # Volumes --------------------------------------------------------
 volumes:
-  ollama_data:
   postgres_data:
 
 

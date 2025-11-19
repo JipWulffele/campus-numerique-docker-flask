@@ -86,6 +86,21 @@
       max-width: 700px;
       margin: 0 auto;
     }
+
+    .image-info {
+      background: #e0e0e0;  /* Light grey */
+      padding: 16px;
+      border-radius: 10px;
+      max-width: 700px;
+      margin: 20px auto 0 auto;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: #333;
+    }
+    .image-info p {
+      margin: 6px 0;
+    }
+
   </style>
 </head>
 
@@ -108,11 +123,32 @@
       <div class="title">{{ title }}</div>
     {% endif %}
 
-    {% if description %}
+    {% if story %}
       <div class="story" style="--bg: {{ bg_color | default('#f7e7a9') }}">
-        {{ description }}
+        {{ story }}
       </div>
     {% endif %}
+
+    {% if color or animal or num_animals or genre or genre_explanation %}
+      <div class="image-info">
+        {% if llm_color %}
+          <p><strong>Background color:</strong> {{ llm_color }}</p>
+        {% endif %}
+        {% if animal %}
+          <p><strong>Animals present:</strong> {{ animal }}</p>
+        {% endif %}
+        {% if num_animals %}
+          <p><strong>Number of animals:</strong> {{ num_animals }}</p>
+        {% endif %}
+        {% if genre %}
+          <p><strong>Genre:</strong> {{ genre }}</p>
+        {% endif %}
+        {% if genre_reasoning %}
+          <p><strong>Why this genre:</strong> {{ genre_reasoning }}</p>
+        {% endif %}
+      </div>
+  {% endif %}
+  
   </form>
 
 </body>
