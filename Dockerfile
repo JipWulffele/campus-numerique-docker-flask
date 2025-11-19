@@ -4,9 +4,10 @@ FROM python:3.12-slim
 RUN pip install uv
 
 # Install dependencies
+# First so cache can be used !
 WORKDIR /mini_project
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen
+RUN uv sync --frozen 
 
 # Copy working directory into docker image
 COPY . .

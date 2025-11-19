@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Image</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f4f4f8;
+      padding: 40px 12px;
+    }
+
+    .card {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.10);
+      text-align: center;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .upload-label {
+      background: #888;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .filename {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .submit-btn {
+      background: #222;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      display: block;
+      margin: 20px auto 0 auto;
+    }
+
+    /* Spinner */
+    .spinner {
+      display: none;
+      margin: 20px auto;
+      border: 6px solid #eee;
+      border-top: 6px solid #555;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <form action="{{ url_for('main') }}" method="POST" enctype="multipart/form-data" class="card" id="uploadForm">
+
+    <label for="img" class="upload-label">Choose Image</label>
+    <input id="img" name="img" type="file" accept="image/*">
+
+    <div class="filename" id="filename"></div>
+
+    <button class="submit-btn" type="submit">Upload</button>
+
+    <div class="spinner" id="spinner"></div>
+
+  </form>
+
+  <script>
+    const fileInput = document.getElementById("img");
+    const fileNameDisplay = document.getElementById("filename");
+    const form = document.getElementById("uploadForm");
+    const spinner = document.getElementById("spinner");
+
+    // Show filename when selected
+    fileInput.addEventListener("change", () => {
+      fileNameDisplay.textContent = fileInput.files.length
+        ? "Selected: " + fileInput.files[0].name
+        : "";
+    });
+
+    // Show spinner on submit
+    form.addEventListener("submit", () => {
+      spinner.style.display = "block";
+    });
+  </script>
+
+</body>
+</html>
