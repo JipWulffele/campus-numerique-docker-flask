@@ -20,6 +20,18 @@ services:
       retries: 10
       start_period: 10s
 
+  # Adminer ---------------------------------------------------------
+  # Database service for Flask application: http://localhost:8080/ -> login with flaskuser/flaskpass
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+
   # Ollama --------------------------------------------------------- 
   ollama:
     image: ollama/ollama # Use the official Ollama image
