@@ -88,13 +88,25 @@ This ensures:
 - You do not need to pull large models again when rebuilding the container
 - The model remains persistent across rebuilds
 
-### 5. ▶️ Run the Full Stack
+### 5. 📄 Create a `.env`
+Copy the `.env.example` file and rename it:
+
+```bash
+cp .env.example .env
+```
+Update the variables if needed (database credentials, model name, etc.).
+
+### 6. ▶️ Run the Full Stack
 ```bash
 docker compose up --build
-``` 
+```
+Once running:
 
-## TODOs
+- Open the Flask app in your browser at:
+http://localhost:5000
 
-- Clean up the code: add docstrings and types
-- Move hyperparameters into a config file?
+- Open Adminer (database UI) at:
+http://localhost:8080
+
+You are now ready to upload images and generate stories!
 
