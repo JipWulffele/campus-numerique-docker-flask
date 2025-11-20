@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 # Agents
 from src.agents.database import Database, Upload
 from src.agents.ollama_client import OllamaClient
+from src.agents.image_processor import ImageProcessor
 
 # Pydantic models
 from src.models.image_description import ImageStroyTelling
@@ -38,6 +39,9 @@ database.create_tables()
 # Initialize Ollama client
 ollama_client = OllamaClient(model=config.OLLAMA_MODEL, host=config.OLLAMA_HOST)
 
+# Initialize Image Processor
+image_processor = ImageProcessor(downscale_image=config.DOWNSCALE_IMAGES, max_pixels=config.MAX_PIXELS)
+
 # App ------------------------------------------------------------------------
 @app.route("/", methods=["GET"])
 def upload_page():
@@ -57,6 +61,11 @@ def main():
         context = get_info_from_database(existing_file)
         return render_template('result.html', img=filename, **context)
 
+    # Downscale image if needed
+    downscaled_image = image_processor.downscale_image(filepath)
+    downscaled_filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"downscaled_{filename}")
+    downscaled_image.save(downscaled_filepath)
+
     # Ask ollama description
     if TEST: # for testing purposes
         response_raw = """{"background_color": "light blue",
@@ -67,7 +76,7 @@ def main():
                         "story": "In a mystical land, a lone dragon soars through the light blue skies, its scales shimmering in the sunlight as it embarks on an epic quest to find a hidden treasure.",
                         "title": "The Dragon's Quest"}"""
     else:
-        response_raw = ollama_client.get_img_story(filepath)
+        response_raw = ollama_client.get_img_story(downscaled_filepath)
     parsed = parse_response(response_raw, ImageStroyTelling)
 
     # Upload to database

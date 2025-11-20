@@ -37,3 +37,7 @@ class Config:
     
     # Upload folder
     UPLOAD_FOLDER = os.path.join('static', 'uploads')
+
+    # Maximum pixels for image processing
+    MAX_PIXELS = int(os.getenv("MAX_PIXELS", "100000"))
+    DOWNSCALE_IMAGES = os.getenv("DOWNSCALE_IMAGES", "True").lower() == "true"

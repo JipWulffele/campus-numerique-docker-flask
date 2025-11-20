@@ -96,6 +96,12 @@ cp .env.example .env
 ```
 Update the variables if needed (database credentials, model name, etc.).
 
+You can configure optional downscaling settings in your `.env` file to reduce image size before sending it to the vision model.  
+This can speed up processing, especially for very large uploads.
+
+However, note that **many vision models internally downscale images anyway**, so the performance gain may be limited depending on the model you use.
+
+
 ### 6. ▶️ Run the Full Stack
 ```bash
 docker compose up --build
