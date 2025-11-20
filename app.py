@@ -13,6 +13,10 @@ from src.models.image_description import ImageStroyTelling
 # helpers
 from src.helpers.utils import parse_response, get_info_from_database, get_info_from_parsed
 
+# Config
+from src.config.config import Config
+config = Config()
+
 # Other
 import ollama
 import os
@@ -22,16 +26,17 @@ TEST = False  # Set to False to use the actual Ollama client
 
 # Initalize app -------------------------------------------------------------
 app = Flask(__name__)
+app.config.from_object(config)
 
-upload_folder = os.path.join('static', 'uploads')
-app.config['UPLOAD'] = upload_folder
+# Set upload folder
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Initialize database
 database = Database(app)
 database.create_tables()
 
 # Initialize Ollama client
-ollama_client = OllamaClient()
+ollama_client = OllamaClient(model=config.OLLAMA_MODEL, host=config.OLLAMA_HOST)
 
 # App ------------------------------------------------------------------------
 @app.route("/", methods=["GET"])
@@ -43,8 +48,7 @@ def main():
     # Upload and save image
     file = request.files['img']
     filename = secure_filename(file.filename)
-    os.makedirs(app.config['UPLOAD'], exist_ok=True)
-    filepath = os.path.join(app.config['UPLOAD'], filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     file.save(filepath)
     
     # Check if file already exists in database
@@ -77,5 +81,5 @@ def main():
 
 # Lets go --------------------------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(debug=config.FLASK_DEBUG, port=config.FLASK_PORT, host="0.0.0.0")
 

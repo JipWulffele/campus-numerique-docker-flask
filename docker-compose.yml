@@ -6,11 +6,12 @@ services:
     image: postgres:latest
     container_name: postgres_db
     environment:
-      POSTGRES_USER: flaskuser
-      POSTGRES_PASSWORD: flaskpass
-      POSTGRES_DB: flaskdb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      - ${POSTGRES_PORT}:5432
     volumes:
       - postgres_data:/var/lib/postgresql # Persist data, avoid data loss on container restart
     healthcheck:
@@ -27,7 +28,7 @@ services:
     container_name: adminer
     restart: unless-stopped
     ports:
-      - 8080:8080
+      - ${ADMINER_PORT}:8080
     depends_on:
       db:
         condition: service_healthy
@@ -38,9 +39,9 @@ services:
     container_name: ollama
     restart: unless-stopped
     volumes:
-      - /home/jip.wulffele@Digital-Grenoble.local/.ollama/models:/root/.ollama/models # Map local models directory
+      - ${OLLAMA_MODELS_PATH}:/root/.ollama/models # Map local models directory
     ports:
-      - "11435:11434"  # Host port mapping
+      - ${OLLAMA_HOST_PORT}:11434  # Host port mapping
 
   # Flask ---------------------------------------------------------
   flask_app:
@@ -49,9 +50,10 @@ services:
       dockerfile: Dockerfile  
     container_name: flask_app
     ports:
-      - "5000:5000"
+      - ${FLASK_PORT}:5000
     environment:
-      DATABASE_URL: postgresql://flaskuser:flaskpass@db:5432/flaskdb
+      DATABASE_URL: ${DATABASE_URL}
+    restart: unless-stopped
     depends_on:
       - ollama
       - db
@@ -61,7 +63,6 @@ services:
 # Volumes --------------------------------------------------------
 volumes:
   postgres_data:
-
 
 # Useful commands ------------------------------------------------
 
